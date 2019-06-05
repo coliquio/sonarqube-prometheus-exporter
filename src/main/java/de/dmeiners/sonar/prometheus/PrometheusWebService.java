@@ -1,5 +1,6 @@
 package de.dmeiners.sonar.prometheus;
 
+import com.google.protobuf.ProtocolStringList;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.common.TextFormat;
@@ -13,6 +14,7 @@ import org.sonarqube.ws.Measures;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
 import org.sonarqube.ws.client.components.SearchRequest;
+import org.sonarqube.ws.client.components.ShowRequest;
 import org.sonarqube.ws.client.measures.ComponentRequest;
 
 import java.io.OutputStream;
@@ -74,8 +76,8 @@ public class PrometheusWebService implements WebService {
                         wsResponse.getComponent().getMeasuresList().forEach(measure -> {
 
                             if (this.gauges.containsKey(measure.getMetric())) {
-
-                                this.gauges.get(measure.getMetric()).labels(project.getKey(), project.getName()).set(Double.valueOf(measure.getValue()));
+                                String tags = getTagsFromComponent(wsClient, project.getKey());
+                                this.gauges.get(measure.getMetric()).labels(project.getKey(), project.getName(), tags).set(Double.valueOf(measure.getValue()));
                             }
                         });
                     });
@@ -112,11 +114,12 @@ public class PrometheusWebService implements WebService {
 
         CollectorRegistry.defaultRegistry.clear();
 
-        this.enabledMetrics.forEach(metric -> gauges.put(metric.getKey(), Gauge.build()
-            .name(METRIC_PREFIX + metric.getKey())
-            .help(metric.getDescription())
-            .labelNames("key", "name")
-            .register()));
+        this.enabledMetrics.forEach(metric -> gauges.put(
+                metric.getKey(), Gauge.build()
+                    .name(METRIC_PREFIX + metric.getKey())
+                    .help(metric.getDescription())
+                    .labelNames("key", "name", "tags")
+                    .register()));
     }
 
     private Measures.ComponentWsResponse getMeasures(WsClient wsClient, Components.Component project) {
@@ -136,5 +139,11 @@ public class PrometheusWebService implements WebService {
             .setQualifiers(Collections.singletonList(Qualifiers.PROJECT))
             .setPs("500"))
             .getComponentsList();
+    }
+
+    private String getTagsFromComponent(WsClient wsClient, String compId) {
+        ShowRequest request = new ShowRequest().setComponent(compId);
+        Components.Component result = wsClient.components().show(request).getComponent();
+        return result.getTagsOrBuilder().getTagsList().toString();
     }
 }

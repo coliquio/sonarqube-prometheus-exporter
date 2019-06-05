@@ -6,7 +6,7 @@
     <groupId>de.dmeiners</groupId>
     <artifactId>sonar-prometheus-exporter</artifactId>
     <packaging>sonar-plugin</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <url>https://github.com/dmeiners88/sonarqube-prometheus-exporter</url>
     <licenses>
         <license>
@@ -38,6 +38,7 @@
         <sonar.apiVersion>7.0</sonar.apiVersion>
         <jdk.min.version>1.8</jdk.min.version>
         <sonar.sources>src/main/java</sonar.sources>
+        <sonar.test>src/main/test</sonar.test>
     </properties>
 
     <dependencies>
@@ -62,6 +63,21 @@
             <artifactId>simpleclient_common</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
