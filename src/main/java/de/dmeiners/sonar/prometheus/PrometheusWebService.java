@@ -144,6 +144,6 @@ public class PrometheusWebService implements WebService {
     private String getTagsFromComponent(WsClient wsClient, String compId) {
         ShowRequest request = new ShowRequest().setComponent(compId);
         Components.Component result = wsClient.components().show(request).getComponent();
-        return result.getTagsOrBuilder().getTagsList().toString().replaceAll("[", "").replaceAll("]", "");
+        return result.getTagsOrBuilder().getTagsList().toString().replaceAll("\\[", "").replaceAll("]", "");
     }
 }
