@@ -6,7 +6,7 @@
     <groupId>de.dmeiners</groupId>
     <artifactId>sonar-prometheus-exporter</artifactId>
     <packaging>sonar-plugin</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <url>https://github.com/dmeiners88/sonarqube-prometheus-exporter</url>
     <licenses>
         <license>
